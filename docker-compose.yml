@@ -1,0 +1,19 @@
+services:
+  spring-app:
+    image: lexilearn-generate-text-service
+    container_name: lexilearn-generateTextService-container
+
+    # network_mode: host
+
+    ports:
+      - '5004:80'
+
+    environment:
+      PORT: 5004
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_REGION: ${AWS_REGION}
+      SUBSCRIPTION_KEY: ${SUBSCRIPTION_KEY}
+      SERVICE_API_KEY: ${SERVICE_API_KEY}
+      USER_JWT_SERCET: ${USER_JWT_SERCET}
+      MONGO_URI: ${MONGO_URI}

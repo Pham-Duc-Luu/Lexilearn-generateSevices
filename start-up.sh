@@ -5,6 +5,6 @@
 
 export $(cat .env | xargs)
 
-source myenv/bin/activate
+source venv/bin/activate
 
 fastapi dev app/main.py  --port $PORT
