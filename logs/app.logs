@@ -1,0 +1,18 @@
+2025-05-19 12:40:36,002 [INFO] generate-server: Logging to new file: logs/app.logs
+2025-05-19 12:42:03,815 [INFO] generate-server: Logging to new file: logs/app.logs
+2025-05-19 12:42:16,668 [INFO] generate-server: Logging to new file: logs/app.logs
+2025-05-19 12:42:20,068 [INFO] generate-server: Logging to new file: logs/app.logs
+2025-05-19 12:42:21,723 [INFO] generate-server: Logging to new file: logs/app.logs
+2025-05-19 12:42:38,424 [ERROR] generate-server: HTTP Exception: b'{"timestamp":"2025-05-19T12:42:38.424612","status":401,"error":"Unauthorization","message":"Token expired","path":"http://127.0.0.1:5004/generate/audio/v2/get-voices"}'
+2025-05-19 12:42:38,425 [INFO] generate-server: GET /generate/audio/v2/get-voices - 401 in 0.003s
+2025-05-19 12:43:04,389 [INFO] generate-server: Logging to new file: logs/app.logs
+2025-05-19 12:43:15,652 [ERROR] generate-server: HTTP Exception: b'{"timestamp":"2025-05-19T12:43:15.652740","status":401,"error":"Unauthorization","message":"Token expired","path":"http://127.0.0.1:5004/generate/audio/v2/get-voices"}'
+2025-05-19 12:43:15,653 [INFO] generate-server: GET /generate/audio/v2/get-voices - 401 in 0.003s
+2025-05-19 12:44:27,887 [INFO] generate-server: Logging to rotating file: logs/app.logs
+2025-05-19 16:08:41,510 [INFO] generate-server: Logging to rotating file: logs/app.logs
+2025-05-19 16:08:58,103 [INFO] generate-server: Logging to rotating file: logs/app.logs
+2025-05-19 16:49:12,953 [INFO] generate-server: Logging to rotating file: logs/app.logs
+2025-05-19 16:49:22,447 [INFO] generate-server: GET /docs - 200 in 0.000s
+2025-05-19 16:49:22,993 [INFO] generate-server: GET /openapi.json - 200 in 0.007s
+2025-05-19 16:57:19,667 [INFO] generate-server: GET /generate/audio/v2/get-voices - 403 in 0.000s
+2025-05-19 16:57:31,494 [INFO] generate-server: GET /generate/audio/v2/get-voices - 403 in 0.000s

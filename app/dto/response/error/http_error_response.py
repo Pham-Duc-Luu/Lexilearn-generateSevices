@@ -1,10 +1,13 @@
 from datetime import datetime
-from fastapi.responses import JSONResponse
+from urllib.parse import urlparse
+
 from fastapi import HTTPException
+from fastapi.responses import JSONResponse
 
 
 class HttpExceptionResponse(HTTPException):
     def __init__(self, status: int, error: str, message: str, path: str):
+        path = parsed_path = urlparse(path).path  # --> "/some/path"  # <-- Only the path, no host/port/query
         self.JSONResponse = JSONResponse(
             status_code=status,
             content={
@@ -24,12 +27,12 @@ class HttpExceptionResponse(HTTPException):
 class HttpUnauthorizationResponse(HttpExceptionResponse):
 
     def __init__(
-        self,
-        message: str = None,
-        path: str = None,
-        authorization_info: str = None,
-        status: int = 401,
-        error: str = "Unauthorization",
+            self,
+            message: str = None,
+            path: str = None,
+            authorization_info: str = None,
+            status: int = 401,
+            error: str = "Unauthorization",
     ):
         super().__init__(status, error, message, path)
         self.authorization_info = authorization_info  # Optional field to provide additional info about authorization
@@ -38,12 +41,12 @@ class HttpUnauthorizationResponse(HttpExceptionResponse):
 class HttpBadRequestResponse(HttpExceptionResponse):
 
     def __init__(
-        self,
-        message: str = None,
-        path: str = None,
-        authorization_info: str = None,
-        status: int = 400,
-        error: str = "Bad request",
+            self,
+            message: str = None,
+            path: str = None,
+            authorization_info: str = None,
+            status: int = 400,
+            error: str = "Bad request",
     ):
         super().__init__(status, error, message, path)
         self.authorization_info = authorization_info  # Optional field to provide additional info about authorization
@@ -52,12 +55,12 @@ class HttpBadRequestResponse(HttpExceptionResponse):
 class HttpForbiddenResponse(HttpExceptionResponse):
 
     def __init__(
-        self,
-        message: str = None,
-        path: str = None,
-        authorization_info: str = None,
-        status: int = 403,
-        error: str = "Forbidden",
+            self,
+            message: str = None,
+            path: str = None,
+            authorization_info: str = None,
+            status: int = 403,
+            error: str = "Forbidden",
     ):
         super().__init__(status, error, message, path)
         self.authorization_info = authorization_info  # Optional field to provide additional info about authorization
@@ -66,12 +69,12 @@ class HttpForbiddenResponse(HttpExceptionResponse):
 class HttpPaymentRequiredResponse(HttpExceptionResponse):
 
     def __init__(
-        self,
-        message: str = None,
-        path: str = None,
-        authorization_info: str = None,
-        status: int = 402,
-        error: str = "Payment required",
+            self,
+            message: str = None,
+            path: str = None,
+            authorization_info: str = None,
+            status: int = 402,
+            error: str = "Payment required",
     ):
         super().__init__(status, error, message, path)
         self.authorization_info = authorization_info  # Optional field to provide additional info about authorization
@@ -80,12 +83,12 @@ class HttpPaymentRequiredResponse(HttpExceptionResponse):
 class HttpInternalServerError(HttpExceptionResponse):
 
     def __init__(
-        self,
-        message: str = None,
-        path: str = None,
-        authorization_info: str = None,
-        status: int = 500,
-        error: str = "Internal server error",
+            self,
+            message: str = None,
+            path: str = None,
+            authorization_info: str = None,
+            status: int = 500,
+            error: str = "Internal server error",
     ):
         super().__init__(status, error, message, path)
         self.authorization_info = authorization_info  # Optional field to provide additional info about authorization
@@ -94,12 +97,12 @@ class HttpInternalServerError(HttpExceptionResponse):
 class HttpNotFoundResponse(HttpExceptionResponse):
 
     def __init__(
-        self,
-        message: str = None,
-        path: str = None,
-        authorization_info: str = None,
-        status: int = 404,
-        error: str = "Not found",
+            self,
+            message: str = None,
+            path: str = None,
+            authorization_info: str = None,
+            status: int = 404,
+            error: str = "Not found",
     ):
         super().__init__(status, error, message, path)
         self.authorization_info = authorization_info  # Optional field to provide additional info about authorization
