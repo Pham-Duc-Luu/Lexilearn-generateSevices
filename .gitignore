@@ -8,6 +8,8 @@ public.pem
 
 *.pem
 
+.idea
+
 venv
 
 **logs**
