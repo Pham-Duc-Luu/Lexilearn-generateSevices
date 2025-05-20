@@ -1,2 +1,0 @@
-2025-05-19 12:02:43,109 [INFO] generate-server: GET /generate/audio/v2/get-voices - 401 in 0.002s
-2025-05-19 12:03:00,777 [INFO] generate-server: GET /generate/audio/v2/get-voices - 401 in 0.002s
