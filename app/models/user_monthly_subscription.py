@@ -14,15 +14,36 @@ class SubscriptionDetail(BaseModel):
     spent_character: int = Field(..., ge=0)
     supported_engine: List[Literal["neural", "standard"]]
 
+class BasicSubscription(SubscriptionDetail):
+    total_character: int = Field(10_000, ge=0)
+    spent_character: int = Field(0, ge=0)
+    supported_engine: List[Literal["neural", "standard"]] = ["standard"]
+
+class StartSubscription(SubscriptionDetail):
+    total_character: int = Field(20_000, ge=0)
+    spent_character: int = Field(0, ge=0)
+    supported_engine: List[Literal["neural", "standard"]] = ["standard"]
+
+class ProSubscription(SubscriptionDetail):
+    total_character: int = Field(50_000, ge=0)
+    spent_character: int = Field(0, ge=0)
+    supported_engine: List[Literal["neural", "standard"]] = ["standard", "neural"]    
+
+class BussinessSubscription(SubscriptionDetail):
+    total_character: int = Field(100_000, ge=0)
+    spent_character: int = Field(0, ge=0)
+    supported_engine: List[Literal["neural", "standard"]] = ["standard", "neural"]    
+
 
 class UserMonthlySubscription(Document):
+
     _id: Optional[Union[str, ObjectId]] = None
-    start_date: Optional[datetime] = None
-    end_date: Optional[datetime] = None
-    user_uuid: Annotated[str, Indexed(unique=True)]
-    user_email: Optional[EmailStr] = None
-    subscription_plan: Optional[Literal["basic", "start", "pro", "business"]] = None
-    subscription_detail: Optional[SubscriptionDetail] = None
+    start_date: datetime = None
+    end_date: datetime = None
+    user_uuid: str
+    user_email: EmailStr = None
+    subscription_plan: Literal["basic", "start", "pro", "business"] = "basic"
+    subscription_detail: SubscriptionDetail = BasicSubscription()
 
     class Settings:
         name = "user_subscription"
@@ -32,7 +53,12 @@ class UserMonthlySubscription(Document):
         cls, userUUID: str
     ) -> Optional["UserMonthlySubscription"]:
         now = datetime.now(timezone.utc)
-        return await cls.find_one({"user_uuid": userUUID, "end_date": {"$gt": now}})
+        return await cls.find_one(
+            cls.user_uuid == userUUID,
+            cls.end_date > now
+        )
+    
+
 
 
 def createUserMonthlySubscription(
@@ -48,29 +74,19 @@ def createUserMonthlySubscription(
     )
     if subscription_plan == "basic":
         userMonthlySubscription.subscription_plan = "basic"
-        userMonthlySubscription.subscription_detail = SubscriptionDetail(
-            spent_character=0, supported_engine=["standard"], total_character=10_000
-        )
+        userMonthlySubscription.subscription_detail = BasicSubscription()
+
+
     elif subscription_plan == "start":
         userMonthlySubscription.subscription_plan = "start"
-        userMonthlySubscription.subscription_detail = SubscriptionDetail(
-            spent_character=0, supported_engine=["standard"], total_character=20_000
-        )
+        userMonthlySubscription.subscription_detail = StartSubscription()
     elif subscription_plan == "pro":
         userMonthlySubscription.subscription_plan = "pro"
-        userMonthlySubscription.subscription_detail = SubscriptionDetail(
-            spent_character=0,
-            supported_engine=["standard", "neural"],
-            total_character=50_000,
-        )
+        userMonthlySubscription.subscription_detail = ProSubscription()
 
     elif subscription_plan == "business":
         userMonthlySubscription.subscription_plan = "business"
-        userMonthlySubscription.subscription_detail = SubscriptionDetail(
-            spent_character=0,
-            supported_engine=["standard", "neural"],
-            total_character=100_000,
-        )
+        userMonthlySubscription.subscription_detail = BussinessSubscription()
     else:
         raise HttpBadRequestResponse(message="Un-support subscription type")
 

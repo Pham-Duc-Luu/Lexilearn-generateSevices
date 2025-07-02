@@ -12,11 +12,11 @@ pip freeze > requirements.txt
 # sudo docker compose up -d
 
 # Build docker hub
-sudo docker build -t pdluu/lexilearn-generate-text-service .
-sudo docker push pdluu/lexilearn-generate-text-service
+# sudo docker build -t pdluu/lexilearn-generate-text-service .
+# sudo docker push pdluu/lexilearn-generate-text-service
 
 
-#source venv/bin/activate
+source venv/bin/activate
 #
-#fastapi dev app/main.py  --port $PORT
+fastapi dev app/main.py  --port $PORT
 # uvicorn app.main:app --reload --port $PORT

@@ -5,6 +5,10 @@ from fastapi import HTTPException
 from fastapi.responses import JSONResponse
 
 
+def safe_decode(obj):
+    return obj.decode() if isinstance(obj, bytes) else obj
+
+
 class HttpExceptionResponse(HTTPException):
     def __init__(self, status: int, error: str, message: str, path: str):
         path = parsed_path = urlparse(path).path  # --> "/some/path"  # <-- Only the path, no host/port/query
@@ -12,10 +16,10 @@ class HttpExceptionResponse(HTTPException):
             status_code=status,
             content={
                 "timestamp": datetime.now().isoformat(),
-                "status": status,
-                "error": error,
-                "message": message,
-                "path": path,
+                "status": safe_decode(status),
+                "error": safe_decode(error),
+                "message": safe_decode(message),
+                "path": safe_decode(path),
             },
         )
         super().__init__(status_code=status, detail=str(message))
@@ -39,7 +43,6 @@ class HttpUnauthorizationResponse(HttpExceptionResponse):
 
 
 class HttpBadRequestResponse(HttpExceptionResponse):
-
     def __init__(
             self,
             message: str = None,

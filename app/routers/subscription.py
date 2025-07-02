@@ -1,15 +1,14 @@
+import json
 from datetime import datetime, timezone
 from typing import Literal
+
 from fastapi import APIRouter, Depends
-from fastapi.responses import JSONResponse
 from pydantic import BaseModel
-import json
+
 from app.dto.response.error.http_error_response import (
-    HttpInternalServerError,
     HttpBadRequestResponse,
     HttpNotFoundResponse,
 )
-
 from app.middleware.authentication.system.api_key_middleware import (
     api_key_validator,
     api_subscription_key_validator,
@@ -19,7 +18,6 @@ from app.models.user_monthly_subscription import (
     UserMonthlySubscription,
     createUserMonthlySubscription,
 )
-from app.utils.convert import convert_mongo_obj
 
 router = APIRouter(
     prefix="/subscription",
@@ -39,50 +37,44 @@ class SubscriptionRequest(BaseModel):
 
 @router.post("")
 async def subscription_for_user(
-    request: SubscriptionRequest,
-    payload: dict = Depends(verify_jwt_token),
+        request: SubscriptionRequest,
+        payload: dict = Depends(verify_jwt_token),
 ):
-    try:
-        user_raw = payload.get("user", {})
-        user = json.loads(user_raw) if isinstance(user_raw, str) else user_raw
-        user_uuid = user.get("user_uuid")
+    user_raw = payload.get("user", {})
+    user = json.loads(user_raw) if isinstance(user_raw, str) else user_raw
+    user_uuid = user.get("user_uuid")
 
-        if user_uuid == None:
-            raise HttpBadRequestResponse
+    if user_uuid == None:
+        raise HttpBadRequestResponse
 
-        now = datetime.now(timezone.utc)
+    now = datetime.now(timezone.utc)
 
-        ## * find any un-expired subscription : end-date > now
-        un_expired_subscription = await UserMonthlySubscription.find_one(
-            {"user_uuid": user_uuid, "end_date": {"$gt": now}}
+    ## * find any un-expired subscription : end-date > now
+    un_expired_subscription = await UserMonthlySubscription.find_one(
+        {"user_uuid": user_uuid, "end_date": {"$gt": now}}
+    )
+
+    if un_expired_subscription != None:
+        raise HttpBadRequestResponse(
+            message="Subscription have not expired yet!"
         )
 
-        if un_expired_subscription != None:
+    ## * if all of subscription expired, then allow to subscript
 
-            return HttpBadRequestResponse(
-                message="Subscription have not expired yet!"
-            ).JSONResponse
+    newSubscription = createUserMonthlySubscription(
+        userUUID=user_uuid,
+        userEmail=user.get("user_email"),
+        subscription_plan=request.subscription_plan,
+    )
 
-        ## * if all of subscription expired, then allow to subscript
-
-        newSubscription = createUserMonthlySubscription(
-            userUUID=user_uuid,
-            userEmail=user.get("user_email"),
-            subscription_plan=request.subscription_plan,
-        )
-
-        result = await newSubscription.insert()
-
-    except Exception as e:
-        print(e)
-        raise HttpInternalServerError()
+    result = await newSubscription.insert()
 
     return newSubscription
 
 
 @router.get("")
 async def get_current_subscription(
-    payload: dict = Depends(verify_jwt_token),
+        payload: dict = Depends(verify_jwt_token),
 ) -> UserMonthlySubscription:
     user_raw = payload.get("user", {})
     user = json.loads(user_raw) if isinstance(user_raw, str) else user_raw
@@ -91,15 +83,12 @@ async def get_current_subscription(
     now = datetime.now(timezone.utc)
 
     ## * find any un-expired subscription : end-date > now
-    un_expired_subscription = (
-        await UserMonthlySubscription.get_user_current_subscription(user_uuid)
-    )
+    un_expired_subscription = await UserMonthlySubscription.get_user_current_subscription(user_uuid)
 
     if un_expired_subscription == None:
-        return HttpNotFoundResponse(message="Your have not subscribe").JSONResponse
+        raise HttpNotFoundResponse(message="Your have not subscribe")
 
     return un_expired_subscription
-
 
 # @router.get("")
 # async def upgrade_user_subscription(

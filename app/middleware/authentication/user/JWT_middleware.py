@@ -31,12 +31,10 @@ def verify_jwt_token(
         payload = jwt.decode(token, public_key, algorithms=["RS256"])
         return payload  # return decoded claims
     except ExpiredSignatureError as e:
-        print(f"ExpiredSignatureError: {e}")
         raise HttpUnauthorizationResponse(
             path=str(request.url), message="Token expired"
         )
     except JWTError as e:
-        print(f"InvalidTokenError: {e}")
         raise HttpUnauthorizationResponse(
             path=str(request.url), message="Invalid token"
         )

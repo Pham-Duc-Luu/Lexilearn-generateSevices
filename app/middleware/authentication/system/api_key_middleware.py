@@ -9,8 +9,6 @@ SUBSCRIPTION_KEY = os.getenv("SUBSCRIPTION_KEY")
 
 async def api_key_validator(request: Request):
     api_key = request.headers.get("X-API-KEY")
-    print(request.headers)
-    print(api_key)
     if api_key != API_KEY:
         raise HttpUnauthorizationResponse(message="Missing api key")
 

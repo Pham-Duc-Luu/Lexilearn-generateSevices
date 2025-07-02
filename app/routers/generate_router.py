@@ -61,23 +61,23 @@ async def generate_audio_v2(
 
         # * check for user characters use
         if user_subscription == None:
-            return HttpNotFoundResponse(
+            raise HttpNotFoundResponse(
                 message="It seen like you have not subscribe yet"
-            ).JSONResponse
+            )
 
         if (
             user_subscription.subscription_detail.spent_character
             >= user_subscription.subscription_detail.total_character
         ):
-            return HttpBadRequestResponse(
+            raise HttpBadRequestResponse(
                 message="Look like you touch the limit of the your plan"
-            ).JSONResponse
+            )
 
         # * check use's plan voice
         polly_voice = await AmazonPollyVoice.find_one({"Id": request.voice_id})
 
         if polly_voice == None:
-            return HttpNotFoundResponse(message="This voice is not exist").JSONResponse
+            raise HttpNotFoundResponse(message="This voice is not exist")
 
         character_quantity = len(request.text)
 
@@ -90,7 +90,6 @@ async def generate_audio_v2(
         )
 
     except Exception as e:
-        print(e)
         raise HttpInternalServerError()
 
 
